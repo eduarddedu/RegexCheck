@@ -78,8 +78,8 @@ class FormsControllerTests {
     @Test
     void shouldLoadRegexEntities() throws Exception {
         List<Regex> entities = Arrays.asList(
-                new Regex(1, ".*", "matches any string", ""),
-                new Regex(2, "\\w+", "a word", ""));
+                new Regex(".*", "matches any string", ""),
+                new Regex("\\w+", "a word", ""));
         given(regexStorageService.getAll()).willReturn(entities);
         mvc.perform(get("/archive")).andExpect(status().isOk()).andExpect(model().attribute("entities", entities));
     }

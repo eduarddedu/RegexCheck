@@ -23,12 +23,13 @@ public class FormsController {
     private RegexStorageService regexStorageService;
 
     @GetMapping("/")
-    public String loadEmptyForm() {
+    public String showCheckedRegex() {
         return "index";
     }
 
     @PostMapping("/")
-    private String checkRegex(@RequestParam String regex, @RequestParam String text, @RequestParam String description, Model model) {
+    private String showCheckedRegex(@RequestParam String regex,
+                                    @RequestParam String text, @RequestParam String description, Model model) {
         model.addAttribute("regex", regex);
         model.addAttribute("text", text);
         model.addAttribute("description", description);
@@ -43,20 +44,20 @@ public class FormsController {
         return "index";
     }
 
-    @PostMapping("/edit")
-    private String loadRegexEntity(@RequestParam int id, Model model) {
-        Regex entity = regexStorageService.get(id);
-        return checkRegex(entity.getValue(), entity.getText(), entity.getDescription(), model);
-    }
-
     @GetMapping("/archive")
-    public String loadPage(Model model) {
+    public String showStoredEntities(Model model) {
         List<Regex> entities = regexStorageService.getAll();
         model.addAttribute("entities", entities);
         return "archive";
     }
 
-    @PostMapping("/archive")
+    @PostMapping("/delete")
+    private String deleteRegex(@RequestParam String id) {
+        regexStorageService.delete(id);
+        return "redirect:/archive";
+    }
+
+    @PostMapping("/store")
     public String storeRegex(@RequestParam String regex, @RequestParam String text, @RequestParam String description) {
         this.regexStorageService.store(new Regex(regex, description, text));
         return "redirect:/archive";

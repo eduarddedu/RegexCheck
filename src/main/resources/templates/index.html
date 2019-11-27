@@ -28,7 +28,7 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="text">Input</label>
-                                <textarea class="form-control" id="text" name="text" placeholder="Enter any text"
+                                <textarea class="form-control" id="text" name="text" placeholder="Enter text to match"
                                           rows="10" th:text="${text}" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-outline-primary">Submit</button>
@@ -53,7 +53,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <form method="post" enctype="application/x-www-form-urlencoded" action="/archive">
+                        <form method="post" enctype="application/x-www-form-urlencoded" action="/store">
                             <div class="form-group">
                                 <label for="regex2">Regex</label>
                                 <input type="text" class="form-control" id="regex2" name="regex" th:value="${regex}"

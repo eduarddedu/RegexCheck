@@ -5,30 +5,31 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-6">
-            <div style="display:flex">
-            <form id="edit" method="post" enctype="application/x-www-form-urlencoded" action="/edit" style="margin-right:4px">
-                <button class="btn btn-outline-primary" disabled>Edit</button>
-            </form>
-            <form id="delete" method="post" enctype="application/x-www-form-urlencoded" action="/delete">
-                <button class="btn btn-outline-danger" disabled>Delete</button>
-            </form>
+            <div class="card">
+                <div class="card-header">Archive</div>
+                <div class="card-body">
+                    <form method="post" enctype="application/x-www-form-urlencoded" action="/delete">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>Regex</th>
+                                <th>Description</th>
+                                <th>Select</th>
+                            </tr>
+                            <tr th:each="regex: ${entities}">
+                                <td th:text="${regex.value}"></td>
+                                <td th:text="${regex.description}"></td>
+                                <td><input type="radio" name="id" th:value="${regex.id}"
+                                           readonly
+                                           onclick="document.querySelector('#deleteBtn').removeAttribute('disabled')">
+                                </td>
+                            </tr>
+                        </table>
+                        <button id="deleteBtn" type="submit" class="btn btn-outline-danger" disabled>Delete</button>
+                    </form>
+                </div>
             </div>
-            <table class="table table-borderless">
-                <tr>
-                    <th>Regex</th>
-                    <th>Description</th>
-                    <th>Select</th>
-                </tr>
-                <tr th:each="regex: ${entities}">
-                    <td th:text="${regex.value}"></td>
-                    <td th:text="${regex.description}"></td>
-                    <td><input type="radio" name="regexId" th:attr="id=${regex.id}"></td>
-                </tr>
-            </table>
         </div>
     </div>
 </div>
-<script type="text/javascript" src="archive.js">
-</script>
 </body>
 </html>

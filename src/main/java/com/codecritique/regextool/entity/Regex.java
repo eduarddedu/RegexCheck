@@ -1,19 +1,18 @@
 package com.codecritique.regextool.entity;
 
-
 import java.util.Objects;
 
 public class Regex {
-    private int id;
+    private String id;
     private String value;
     private String description;
     private String text;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -47,7 +46,7 @@ public class Regex {
         this.text = text;
     }
 
-    public Regex(int id, String value, String description, String text) {
+    public Regex(String id, String value, String description, String text) {
         this(value, description, text);
         this.id = id;
     }
