@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
 @Controller
-public class RegexCheckController {
+public class FormsController {
 
     @Autowired
     private RegexCheckService regexCheckService;
@@ -46,5 +47,18 @@ public class RegexCheckController {
     private String loadRegexEntity(@RequestParam int id, Model model) {
         Regex entity = regexStorageService.get(id);
         return checkRegex(entity.getValue(), entity.getText(), entity.getDescription(), model);
+    }
+
+    @GetMapping("/archive")
+    public String loadPage(Model model) {
+        List<Regex> entities = regexStorageService.getAll();
+        model.addAttribute("entities", entities);
+        return "archive";
+    }
+
+    @PostMapping("/archive")
+    public String storeRegex(@RequestParam String regex, @RequestParam String text, @RequestParam String description) {
+        this.regexStorageService.store(new Regex(regex, description, text));
+        return "redirect:/archive";
     }
 }
