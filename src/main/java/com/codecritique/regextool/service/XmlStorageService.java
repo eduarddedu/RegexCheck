@@ -88,9 +88,8 @@ public class XmlStorageService implements RegexStorageService {
     private Regex map(Node node) throws XPathExpressionException {
         String id = xpath.evaluate("@id", node);
         String value = decoded(xpath.evaluate("value", node));
-        String text = decoded(xpath.evaluate("text", node));
         String description = decoded(xpath.evaluate("description", node));
-        return new Regex(id, value, description, text);
+        return new Regex(id, value, description);
     }
 
     private Node map(Regex regex) {
@@ -99,7 +98,6 @@ public class XmlStorageService implements RegexStorageService {
         NodeBuilder nb = new NodeBuilder(parent);
         return nb.append("value", encoded(regex.getValue()))
                 .append("description", encoded(regex.getDescription()))
-                .append("text", encoded(regex.getText()))
                 .build();
     }
 
@@ -111,7 +109,7 @@ public class XmlStorageService implements RegexStorageService {
             document = builder.parse(new InputSource(in));
             in.close();
         } catch (Exception e) {
-            throw new StorageException("Couldn't load db: " + e.getMessage());
+            throw new StorageException("Couldn't read xml database: " + e.getMessage());
         }
     }
 

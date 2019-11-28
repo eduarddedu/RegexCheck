@@ -28,11 +28,9 @@ public class FormsController {
     }
 
     @PostMapping("/")
-    private String showCheckedRegex(@RequestParam String regex,
-                                    @RequestParam String text, @RequestParam String description, Model model) {
+    private String showCheckedRegex(@RequestParam String regex, @RequestParam String text, Model model) {
         model.addAttribute("regex", regex);
         model.addAttribute("text", text);
-        model.addAttribute("description", description);
         try {
             String matchers = regexCheckService.getMatchersAsMultiLineText(regex, text);
             if (!matchers.isEmpty()) {
@@ -58,8 +56,8 @@ public class FormsController {
     }
 
     @PostMapping("/store")
-    public String storeRegex(@RequestParam String regex, @RequestParam String text, @RequestParam String description) {
-        this.regexStorageService.store(new Regex(regex, description, text));
+    public String storeRegex(@RequestParam String regex, @RequestParam String description) {
+        this.regexStorageService.store(new Regex(regex, description));
         return "redirect:/archive";
     }
 }

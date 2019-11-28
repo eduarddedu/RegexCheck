@@ -6,7 +6,6 @@ public class Regex {
     private String id;
     private String value;
     private String description;
-    private String text;
 
     public String getId() {
         return id;
@@ -24,10 +23,6 @@ public class Regex {
         this.description = description;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public String getValue() {
         return value;
     }
@@ -36,18 +31,14 @@ public class Regex {
         return description;
     }
 
-    public String getText() {
-        return text;
-    }
 
-    public Regex(String value, String description, String text) {
+    public Regex(String value, String description) {
         this.value = value;
         this.description = description;
-        this.text = text;
     }
 
-    public Regex(String id, String value, String description, String text) {
-        this(value, description, text);
+    public Regex(String id, String value, String description) {
+        this(value, description);
         this.id = id;
     }
 
@@ -56,15 +47,14 @@ public class Regex {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Regex regex = (Regex) o;
-        return id == regex.id &&
+        return Objects.equals(id, regex.id) &&
                 value.equals(regex.value) &&
-                description.equals(regex.description) &&
-                text.equals(regex.text);
+                description.equals(regex.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value, description, text);
+        return Objects.hash(id, value, description);
     }
 
     @Override

@@ -41,9 +41,9 @@ class XmlStorageServiceTests {
 
     @Test
     void shouldGetAll() {
-        List<Regex> expectedList = storeAll(new Regex(".*", "F", "F"),
-                new Regex("[a-z]", "B", "B"),
-                new Regex("B.z", "B", "B"));
+        List<Regex> expectedList = storeAll(new Regex(".*", "F"),
+                new Regex("[a-z]", "B"),
+                new Regex("B.z", "B"));
         List<Regex> actualList = service.getAll();
         assertEquals(expectedList.size(), actualList.size());
         for (int i = 0; i < expectedList.size(); i++) {
@@ -51,25 +51,23 @@ class XmlStorageServiceTests {
             Regex actual = actualList.get(i);
             assertEquals(expected.getValue(), actual.getValue());
             assertEquals(expected.getDescription(), actual.getDescription());
-            assertEquals(expected.getText(), actual.getText());
         }
     }
 
     @Test
     void shouldGetAnExistingItem() {
-        Regex expected = new Regex("F", "F", "F");
+        Regex expected = new Regex("F", "F");
         service.store(expected);
         Regex actual = service.getAll().get(0);
         assertEquals(expected.getValue(), actual.getValue());
         assertEquals(expected.getDescription(), actual.getDescription());
-        assertEquals(expected.getText(), actual.getText());
     }
 
     @Test
     void shouldDeleteAnExistingItem() {
-        List<Regex> expectedList = storeAll(new Regex("F", "F", "F"),
-                new Regex("[a-z]", "B", "B"),
-                new Regex("B.z", "B", "B"));
+        List<Regex> expectedList = storeAll(new Regex("F", "F"),
+                new Regex("[a-z]", "B"),
+                new Regex("B.z", "B"));
         String id = service.getAll().get(1).getId();
         service.delete(id);
         expectedList.remove(1);
@@ -80,7 +78,6 @@ class XmlStorageServiceTests {
             Regex actual = actualList.get(i);
             assertEquals(expected.getValue(), actual.getValue());
             assertEquals(expected.getDescription(), actual.getDescription());
-            assertEquals(expected.getText(), actual.getText());
         }
     }
 
