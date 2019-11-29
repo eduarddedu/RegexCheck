@@ -2,6 +2,19 @@ header {
     margin-bottom: 4rem;
 }
 
+.navbar-nav {
+    flex-direction: row;
+}
+
+.navbar-nav>.nav-link {
+    padding-right: .5rem;
+    padding-left: .5rem;
+}
+
+.navbar >.container {
+    justify-content: flex-start;
+}
+
 .card {
   box-shadow: 3px 3px 20px -10px;
 }
