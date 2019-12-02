@@ -6,6 +6,7 @@ public class Regex {
     private String id;
     private String value;
     private String description;
+    private String text;
 
     public String getId() {
         return id;
@@ -15,30 +16,39 @@ public class Regex {
         this.id = id;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getValue() {
         return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getDescription() {
         return description;
     }
 
-
-    public Regex(String value, String description) {
-        this.value = value;
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Regex(String id, String value, String description) {
-        this(value, description);
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+
+    public Regex(String value, String description, String text) {
+        this.value = value;
+        this.description = description;
+        this.text = text;
+    }
+
+    public Regex(String id, String value, String description, String text) {
+        this(value, description, text);
         this.id = id;
     }
 

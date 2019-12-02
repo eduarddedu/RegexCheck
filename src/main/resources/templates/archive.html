@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header">Archive</div>
                 <div class="card-body">
-                    <form method="post" enctype="application/x-www-form-urlencoded" action="/delete">
+                    <form method="post" enctype="application/x-www-form-urlencoded">
                         <table class="table table-borderless">
                             <tr>
                                 <th>Regex</th>
@@ -18,18 +18,28 @@
                             <tr th:each="regex: ${entities}">
                                 <td th:text="${regex.value}"></td>
                                 <td th:text="${regex.description}"></td>
-                                <td><input type="radio" name="id" th:value="${regex.id}"
-                                           readonly
-                                           onclick="document.querySelector('#deleteBtn').removeAttribute('disabled')">
+                                <td><input type="radio" name="id" th:value="${regex.id}" readonly
+                                           onclick="enableSubmitButtons()">
                                 </td>
                             </tr>
                         </table>
-                        <button id="deleteBtn" type="submit" class="btn btn-outline-danger" disabled>Delete</button>
+                        <button id="editBtn" type="submit" formaction="/edit" class="btn btn-outline-primary"
+                                disabled>Edit
+                        </button>
+                        <button id="deleteBtn" style="float:right" type="submit" formaction="/delete" class="btn btn-outline-danger"
+                                disabled>Delete
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    function enableSubmitButtons() {
+        document.querySelectorAll('button[type=submit]').forEach(b => b.removeAttribute('disabled'));
+    }
+
+</script>
 </body>
 </html>

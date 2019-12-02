@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface RegexStorageService {
     void store(Regex regex);
+    Regex get(String id);
     List<Regex> getAll();
+    void update(Regex regex);
     void delete(String id);
     void init();
 }

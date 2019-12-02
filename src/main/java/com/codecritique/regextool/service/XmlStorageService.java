@@ -45,6 +45,17 @@ public class XmlStorageService implements RegexStorageService {
     }
 
     @Override
+    public Regex get(String id) {
+        try {
+            read();
+            Node node = (Node) xpath.evaluate("storage/regex[@id=" + id + "]", document, XPathConstants.NODE);
+            return map(node);
+        } catch (Exception e) {
+            throw new StorageException(e.getMessage());
+        }
+    }
+
+    @Override
     public List<Regex> getAll() {
         try {
             read();
@@ -73,6 +84,20 @@ public class XmlStorageService implements RegexStorageService {
     }
 
     @Override
+    public void update(Regex regex) {
+        try {
+            read();
+            Element node = (Element) xpath.evaluate("storage/regex[@id=" + regex.getId() + "]", document, XPathConstants.NODE);
+            node.getElementsByTagName("value").item(0).setTextContent(regex.getValue());
+            node.getElementsByTagName("description").item(0).setTextContent(regex.getDescription());
+            node.getElementsByTagName("text").item(0).setTextContent(regex.getText());
+            save();
+        } catch (Exception e) {
+            throw new StorageException("Couldn't update regex: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void delete(String id) {
         try {
             read();
@@ -89,7 +114,8 @@ public class XmlStorageService implements RegexStorageService {
         String id = xpath.evaluate("@id", node);
         String value = decoded(xpath.evaluate("value", node));
         String description = decoded(xpath.evaluate("description", node));
-        return new Regex(id, value, description);
+        String text = decoded(xpath.evaluate("text", node));
+        return new Regex(id, value, description, text);
     }
 
     private Node map(Regex regex) {
@@ -98,6 +124,7 @@ public class XmlStorageService implements RegexStorageService {
         NodeBuilder nb = new NodeBuilder(parent);
         return nb.append("value", encoded(regex.getValue()))
                 .append("description", encoded(regex.getDescription()))
+                .append("text", encoded(regex.getText()))
                 .build();
     }
 
