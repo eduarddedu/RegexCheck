@@ -21,10 +21,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -88,13 +86,17 @@ public class XmlStorageService implements RegexStorageService {
         try {
             read();
             Element node = (Element) xpath.evaluate("storage/regex[@id=" + regex.getId() + "]", document, XPathConstants.NODE);
-            node.getElementsByTagName("value").item(0).setTextContent(regex.getValue());
-            node.getElementsByTagName("description").item(0).setTextContent(regex.getDescription());
-            node.getElementsByTagName("text").item(0).setTextContent(regex.getText());
+            setChildNodeTextContent(node, "value", regex.getValue());
+            setChildNodeTextContent(node, "description", regex.getDescription());
+            setChildNodeTextContent(node, "text", regex.getText());
             save();
         } catch (Exception e) {
             throw new StorageException("Couldn't update regex: " + e.getMessage());
         }
+    }
+
+    private void setChildNodeTextContent(Element parent, String childNodeName, String content) {
+        parent.getElementsByTagName(childNodeName).item(0).setTextContent(encoded(content));
     }
 
     @Override
@@ -149,21 +151,11 @@ public class XmlStorageService implements RegexStorageService {
     }
 
     private String encoded(String s) {
-        try {
-            return URLEncoder.encode(s, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return Base64.getEncoder().encodeToString(s.getBytes());
     }
 
     private String decoded(String s) {
-        try {
-            return URLDecoder.decode(s, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return new String(Base64.getDecoder().decode(s.getBytes()));
     }
 
     class NodeBuilder {

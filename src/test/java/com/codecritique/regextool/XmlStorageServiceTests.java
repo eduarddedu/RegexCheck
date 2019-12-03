@@ -2,8 +2,8 @@ package com.codecritique.regextool;
 
 import com.codecritique.regextool.entity.Regex;
 import com.codecritique.regextool.service.RegexStorageService;
-import com.codecritique.regextool.service.XmlStorageService;
 import com.codecritique.regextool.service.StorageProperties;
+import com.codecritique.regextool.service.XmlStorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
@@ -56,13 +56,13 @@ class XmlStorageServiceTests {
 
     @Test
     void shouldGetAnExistingItem() {
-        Regex expected = new Regex("F", "F", "F");
+        Regex expected = new Regex("F", "F", "F\nF\nBaz");
         service.store(expected);
         Regex actual = service.getAll().get(0);
         assertEquals(expected.getValue(), actual.getValue());
         assertEquals(expected.getDescription(), actual.getDescription());
     }
-
+    
     @Test
     void shouldDeleteAnExistingItem() {
         List<Regex> expectedList = storeAll(new Regex("F", "F", "F"),
@@ -93,7 +93,7 @@ class XmlStorageServiceTests {
         assertEquals(regex, service.get(id));
     }
 
-    private List<Regex> storeAll(Regex ...entities) {
+    private List<Regex> storeAll(Regex... entities) {
         List<Regex> items = new ArrayList<>();
         for (Regex entity : entities) {
             items.add(entity);

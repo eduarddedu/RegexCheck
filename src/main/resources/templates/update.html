@@ -57,8 +57,8 @@
                     <input id="description" class="form-control" type="text" name="description"
                            placeholder="Enter a description" th:value="${description}" required>
                 </div>
-                <input type="text" name="id" style="display:none" th:value="${id}">
-                <input type="text" name="text" style="display:none" th:value="${text}">
+                <input type="text" name="id" th:value="${id}" style="display:none">
+                <textarea name="text" th:text="${text}" style="display:none"></textarea>
                 <button type="submit" class="btn btn-outline-primary">Submit</button>
             </form>
         </div>
