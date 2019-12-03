@@ -45,7 +45,7 @@ class FormsControllerTests {
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.put("regex", Collections.singletonList(regex));
         params.put("text", Collections.singletonList(text));
-        mvc.perform(post("/").params(params))
+        mvc.perform(post("/check").params(params))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("regex", regex))
                 .andExpect(model().attribute("text", text))
@@ -60,7 +60,7 @@ class FormsControllerTests {
         params.put("text", Collections.singletonList(textInput));
         params.put("regex", Collections.singletonList(invalidRegexInput));
         given(this.regexCheckService.getMatchersAsMultiLineText(invalidRegexInput, textInput)).willThrow(PatternSyntaxException.class);
-        mvc.perform(post("/").params(params))
+        mvc.perform(post("/check").params(params))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("regex", invalidRegexInput))
                 .andExpect(model().attribute("text", textInput))
@@ -93,7 +93,7 @@ class FormsControllerTests {
         params.put("regex", Collections.singletonList(regex));
         params.put("description", Collections.singletonList(description));
         params.put("text", Collections.singletonList(text));
-        mvc.perform(post("/check").params(params))
+        mvc.perform(post("/checkUpdated").params(params))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("id", id))
                 .andExpect(model().attribute("regex", regex))

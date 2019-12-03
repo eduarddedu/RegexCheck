@@ -8,14 +8,14 @@
     </div>
     <div class="card" id="check-regex-card">
         <div class="card-header">
-            Test expression
+            Test a Java regular expression
         </div>
         <div class="card-body">
-            <form method="post" enctype="application/x-www-form-urlencoded" action="/">
+            <form id="check-regex-form" method="post" enctype="application/x-www-form-urlencoded" action="/check">
                 <div class="form-group">
                     <label for="regex">Regex</label>
                     <input type="text" class="form-control" id="regex" name="regex"
-                           placeholder="Enter a regular expression" th:value="${regex}" required>
+                           placeholder="Enter expression" th:value="${regex}" required>
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -44,7 +44,7 @@
             Comment And Save
         </div>
         <div class="card-body">
-            <form method="post" enctype="application/x-www-form-urlencoded" action="/store">
+            <form id="save-regex-form" method="post" enctype="application/x-www-form-urlencoded" action="/store">
                 <div class="form-group">
                     <label for="regex-readonly">Regex</label>
                     <input type="text" class="form-control" id="regex-readonly" name="regex" th:value="${regex}"

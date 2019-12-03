@@ -22,13 +22,8 @@ public class FormsController {
     @Autowired
     private RegexStorageService regexStorageService;
 
-    @GetMapping("/")
-    public String showCheckedRegex() {
-        return "index";
-    }
-
-    @PostMapping("/")
-    private String loadCheckedRegex(@RequestParam String regex, @RequestParam String text, Model model) {
+    @PostMapping("/check")
+    private String checkRegex(@RequestParam String regex, @RequestParam String text, Model model) {
         model.addAttribute("regex", regex);
         model.addAttribute("text", text);
         try {
@@ -78,7 +73,7 @@ public class FormsController {
         return "redirect:/archive";
     }
 
-    @PostMapping("/check")
+    @PostMapping("/checkUpdated")
     public String checkEditedRegex(@RequestParam String id, @RequestParam String regex, @RequestParam String description,
                                    @RequestParam String text, Model model) {
         model.addAttribute("regex", regex);
