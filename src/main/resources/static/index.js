@@ -1,6 +1,7 @@
-const input = document.querySelector('#regex')
-input.addEventListener('focus', resetPage)
-function resetPage() {
+const inputs = [document.querySelector('#regex'), document.querySelector('#text')]
+inputs.forEach(input => input.addEventListener('focus', clearPage))
+
+function clearPage() {
     hideSaveRegexCard()
     clearMatchers()
 }

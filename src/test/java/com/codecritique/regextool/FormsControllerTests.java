@@ -1,8 +1,8 @@
 package com.codecritique.regextool;
 
 import com.codecritique.regextool.entity.Regex;
-import com.codecritique.regextool.service.RegexCheckService;
-import com.codecritique.regextool.service.RegexStorageService;
+import com.codecritique.regextool.service.CheckService;
+import com.codecritique.regextool.service.StorageService;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +31,17 @@ class FormsControllerTests {
     private MockMvc mvc;
 
     @MockBean
-    private RegexCheckService regexCheckService;
+    private CheckService checkService;
 
     @MockBean
-    private RegexStorageService regexStorageService;
+    private StorageService storageService;
 
     @Test
     void shouldLoadAndCheckRegex() throws Exception {
         String regex = ".*";
         String text = "input";
         String matchers = "input";
-        given(this.regexCheckService.getMatchersAsMultiLineText(regex, text)).willReturn(matchers);
+        given(this.checkService.getMatchersAsMultiLineText(regex, text)).willReturn(matchers);
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.put("regex", Collections.singletonList(regex));
         params.put("text", Collections.singletonList(text));
@@ -59,7 +59,7 @@ class FormsControllerTests {
         String textInput = "input";
         params.put("text", Collections.singletonList(textInput));
         params.put("regex", Collections.singletonList(invalidRegexInput));
-        given(this.regexCheckService.getMatchersAsMultiLineText(invalidRegexInput, textInput)).willThrow(PatternSyntaxException.class);
+        given(this.checkService.getMatchersAsMultiLineText(invalidRegexInput, textInput)).willThrow(PatternSyntaxException.class);
         mvc.perform(post("/check").params(params))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("regex", invalidRegexInput))
@@ -70,7 +70,9 @@ class FormsControllerTests {
     @Test
     void shouldLoadRegexEntityForEdit() throws Exception {
         Regex entity = new Regex("1", ".*", "input text", "input description");
-        given(this.regexStorageService.get(entity.getId())).willReturn(entity);
+        given(this.storageService.get(entity.getId())).willReturn(entity);
+        given(this.checkService.getMatchersAsMultiLineText(entity.getValue(), entity.getText()))
+                .willReturn(entity.getText());
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.put("id", Collections.singletonList(entity.getId()));
         mvc.perform(post("/edit").params(params))
@@ -78,51 +80,16 @@ class FormsControllerTests {
                 .andExpect(model().attribute("id", entity.getId()))
                 .andExpect(model().attribute("regex", entity.getValue()))
                 .andExpect(model().attribute("text", entity.getText()))
-                .andExpect(model().attribute("description", entity.getDescription()));
-    }
-
-    @Test
-    void shouldCheckAndReloadEditedRegex() throws Exception {
-        String regex = ".*";
-        String id = "1";
-        String text = "text";
-        String description = "description";
-        given(this.regexCheckService.getMatchersAsMultiLineText(regex, text)).willReturn(text);
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.put("id", Collections.singletonList(id));
-        params.put("regex", Collections.singletonList(regex));
-        params.put("description", Collections.singletonList(description));
-        params.put("text", Collections.singletonList(text));
-        mvc.perform(post("/checkUpdated").params(params))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("id", id))
-                .andExpect(model().attribute("regex", regex))
-                .andExpect(model().attribute("text", text))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("matchers", text));
-    }
-
-    @Test
-    void shouldRedirectToArchivePageAfterStoringUpdatedRegex() throws Exception {
-        Regex entity = new Regex("1", ".*", "input text", "input description");
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.put("id", Collections.singletonList(entity.getId()));
-        params.put("regex", Collections.singletonList(entity.getValue()));
-        params.put("description", Collections.singletonList(entity.getDescription()));
-        params.put("text", Collections.singletonList(entity.getText()));
-        List<Regex> entities = Collections.singletonList(entity);
-        given(regexStorageService.getAll()).willReturn(entities);
-        mvc.perform(post("/update").params(params))
-                .andExpect(status().isFound())
-                .andExpect(header().string("Location", "/archive"));
+                .andExpect(model().attribute("description", entity.getDescription()))
+                .andExpect(model().attribute("matchers", entity.getText()));;
     }
 
     @Test
     void shouldLoadRegexEntities() throws Exception {
         List<Regex> entities = Arrays.asList(
-                new Regex(".*", "matches any string", ""),
-                new Regex("\\w+", "a word", ""));
-        given(regexStorageService.getAll()).willReturn(entities);
+                new Regex(null, ".*", "matches any string", ""),
+                new Regex(null, "\\w+", "a word", ""));
+        given(storageService.getAll()).willReturn(entities);
         mvc.perform(get("/archive")).andExpect(status().isOk()).andExpect(model().attribute("entities", entities));
     }
 

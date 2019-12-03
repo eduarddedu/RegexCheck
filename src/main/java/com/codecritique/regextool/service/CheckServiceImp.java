@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class RegexCheckServiceImp implements RegexCheckService {
+public class CheckServiceImp implements CheckService {
     private final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @Override

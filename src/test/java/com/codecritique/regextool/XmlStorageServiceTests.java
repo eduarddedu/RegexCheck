@@ -1,7 +1,7 @@
 package com.codecritique.regextool;
 
 import com.codecritique.regextool.entity.Regex;
-import com.codecritique.regextool.service.RegexStorageService;
+import com.codecritique.regextool.service.StorageService;
 import com.codecritique.regextool.service.StorageProperties;
 import com.codecritique.regextool.service.XmlStorageService;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class XmlStorageServiceTests {
 
-    private RegexStorageService service;
+    private StorageService service;
 
     @BeforeEach
     void setupEmptyDatabase() throws IOException {
@@ -41,9 +41,9 @@ class XmlStorageServiceTests {
 
     @Test
     void shouldGetAll() {
-        List<Regex> expectedList = storeAll(new Regex(".*", "F", "F"),
-                new Regex("[a-z]", "B", "B"),
-                new Regex("B.z", "B", "B"));
+        List<Regex> expectedList = storeAll(new Regex(null, ".*", "F", "F"),
+                new Regex(null, "[a-z]", "B", "B"),
+                new Regex(null, "B.z", "B", "B"));
         List<Regex> actualList = service.getAll();
         assertEquals(expectedList.size(), actualList.size());
         for (int i = 0; i < expectedList.size(); i++) {
@@ -56,7 +56,7 @@ class XmlStorageServiceTests {
 
     @Test
     void shouldGetAnExistingItem() {
-        Regex expected = new Regex("F", "F", "F\nF\nBaz");
+        Regex expected = new Regex(null, "F", "F", "F\nF\nBaz");
         service.store(expected);
         Regex actual = service.getAll().get(0);
         assertEquals(expected.getValue(), actual.getValue());
@@ -65,9 +65,9 @@ class XmlStorageServiceTests {
     
     @Test
     void shouldDeleteAnExistingItem() {
-        List<Regex> expectedList = storeAll(new Regex("F", "F", "F"),
-                new Regex("[a-z]", "B", "B"),
-                new Regex("B.z", "B", "B"));
+        List<Regex> expectedList = storeAll(new Regex(null, "F", "F", "F"),
+                new Regex(null, "[a-z]", "B", "B"),
+                new Regex(null, "B.z", "B", "B"));
         String id = service.getAll().get(1).getId();
         service.delete(id);
         expectedList.remove(1);
@@ -83,13 +83,14 @@ class XmlStorageServiceTests {
 
     @Test
     void shouldUpdateAnExistingItem() {
-        storeAll(new Regex("F", "F", "F"),
-                new Regex("[a-z]", "B", "B"),
-                new Regex("B.z", "B", "B"));
+        List<Regex> expectedList = storeAll(new Regex(null, "F", "F", "F"),
+                new Regex(null, "[a-z]", "B", "B"),
+                new Regex(null, "B.z", "B", "B"));
         String id = service.getAll().get(1).getId();
         Regex regex = service.get(id);
         regex.setDescription("Baz");
-        service.update(regex);
+        service.store(regex);
+        assertEquals(expectedList.size(), service.getAll().size());
         assertEquals(regex, service.get(id));
     }
 

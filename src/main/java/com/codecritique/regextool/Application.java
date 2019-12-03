@@ -1,6 +1,6 @@
 package com.codecritique.regextool;
 
-import com.codecritique.regextool.service.RegexStorageService;
+import com.codecritique.regextool.service.StorageService;
 import com.codecritique.regextool.service.StorageProperties;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +17,7 @@ public class Application {
 	}
 
 	@Bean
-	CommandLineRunner init(RegexStorageService service) {
+	CommandLineRunner init(StorageService service) {
 		return (args) -> service.init();
 	}
 

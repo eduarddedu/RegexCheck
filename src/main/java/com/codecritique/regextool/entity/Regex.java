@@ -41,15 +41,11 @@ public class Regex {
     }
 
 
-    public Regex(String value, String description, String text) {
+    public Regex(String id, String value, String description, String text) {
+        this.id = id;
         this.value = value;
         this.description = description;
         this.text = text;
-    }
-
-    public Regex(String id, String value, String description, String text) {
-        this(value, description, text);
-        this.id = id;
     }
 
     @Override

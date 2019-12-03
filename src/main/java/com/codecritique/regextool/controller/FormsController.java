@@ -1,11 +1,12 @@
 package com.codecritique.regextool.controller;
 
 import com.codecritique.regextool.entity.Regex;
-import com.codecritique.regextool.service.RegexCheckService;
-import com.codecritique.regextool.service.RegexStorageService;
+import com.codecritique.regextool.service.CheckService;
+import com.codecritique.regextool.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,17 +18,24 @@ import java.util.regex.PatternSyntaxException;
 public class FormsController {
 
     @Autowired
-    private RegexCheckService regexCheckService;
+    private CheckService checkService;
 
     @Autowired
-    private RegexStorageService regexStorageService;
+    private StorageService storageService;
 
     @PostMapping("/check")
-    private String checkRegex(@RequestParam String regex, @RequestParam String text, Model model) {
+    private String checkRegex(@RequestParam String regex, @RequestParam String text,
+                              @RequestParam(required = false) String id,
+                              @RequestParam(required = false) String description,
+                              Model model) {
         model.addAttribute("regex", regex);
         model.addAttribute("text", text);
+        if (!StringUtils.isEmpty(id)) {
+            model.addAttribute("id", id);
+            model.addAttribute("description", description);
+        }
         try {
-            String matchers = regexCheckService.getMatchersAsMultiLineText(regex, text);
+            String matchers = checkService.getMatchersAsMultiLineText(regex, text);
             if (!matchers.isEmpty()) {
                 model.addAttribute("matchers", matchers);
             }
@@ -38,56 +46,28 @@ public class FormsController {
     }
 
     @PostMapping("/store")
-    public String storeRegex(@RequestParam String regex, @RequestParam String description, @RequestParam String text) {
-        this.regexStorageService.store(new Regex(regex, description, text));
+    public String storeRegex(@RequestParam String id,
+                             @RequestParam String regex, @RequestParam String description, @RequestParam String text) {
+        this.storageService.store(new Regex(id, regex, description, text));
         return "redirect:/archive";
     }
 
     @GetMapping("/archive")
     public String showStoredEntities(Model model) {
-        List<Regex> entities = regexStorageService.getAll();
+        List<Regex> entities = storageService.getAll();
         model.addAttribute("entities", entities);
         return "archive";
     }
 
     @PostMapping("/delete")
     private String deleteRegex(@RequestParam String id) {
-        regexStorageService.delete(id);
+        storageService.delete(id);
         return "redirect:/archive";
     }
 
     @PostMapping("/edit")
     public String loadStoredRegexForEdit(@RequestParam String id, Model model) {
-        Regex regex = this.regexStorageService.get(id);
-        model.addAttribute("regex", regex.getValue());
-        model.addAttribute("text", regex.getText());
-        model.addAttribute("description", regex.getDescription());
-        model.addAttribute("id", id);
-        return "update";
-    }
-
-    @PostMapping("/update")
-    public String updateRegex(@RequestParam String id, @RequestParam String regex,
-                              @RequestParam String description, @RequestParam String text) {
-        this.regexStorageService.update(new Regex(id, regex, description, text));
-        return "redirect:/archive";
-    }
-
-    @PostMapping("/checkUpdated")
-    public String checkEditedRegex(@RequestParam String id, @RequestParam String regex, @RequestParam String description,
-                                   @RequestParam String text, Model model) {
-        model.addAttribute("regex", regex);
-        model.addAttribute("text", text);
-        model.addAttribute("description", description);
-        model.addAttribute("id", id);
-        try {
-            String matchers = regexCheckService.getMatchersAsMultiLineText(regex, text);
-            if (!matchers.isEmpty()) {
-                model.addAttribute("matchers", matchers);
-            }
-        } catch (PatternSyntaxException e) {
-            model.addAttribute("error", e);
-        }
-        return "update";
+        Regex regex = this.storageService.get(id);
+        return checkRegex(regex.getValue(), regex.getText(), id, regex.getDescription(), model);
     }
 }

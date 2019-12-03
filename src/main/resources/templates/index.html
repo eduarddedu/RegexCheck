@@ -34,6 +34,10 @@
                                       readonly></textarea>
                         </div>
                     </div>
+                    <div class="hidden">
+                        <input type="text" name="description" th:value="${description}">
+                        <input type="text" name="id" th:value="${id}">
+                    </div>
                 </div>
             </form>
         </div>
@@ -55,7 +59,10 @@
                     <input id="description" class="form-control" type="text" name="description"
                            placeholder="Enter a description" th:value="${description}" required>
                 </div>
-                <textarea name="text" th:text="${text}" style="display:none"></textarea>
+                <div class="hidden">
+                    <textarea name="text" th:text="${text}"></textarea>
+                    <input type="text" name="id" th:value="${id}">
+                </div>
                 <button type="submit" class="btn btn-outline-primary">Submit</button>
             </form>
         </div>

@@ -4,6 +4,7 @@ import com.codecritique.regextool.entity.Regex;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +27,7 @@ import java.util.Base64;
 import java.util.List;
 
 @Service
-public class XmlStorageService implements RegexStorageService {
+public class XmlStorageService implements StorageService {
     private final String location;
     private Document document;
     private XPath xpath;
@@ -39,13 +40,13 @@ public class XmlStorageService implements RegexStorageService {
 
     @Override
     public void init() {
-        this.read();
+        this.readDatabase();
     }
 
     @Override
     public Regex get(String id) {
         try {
-            read();
+            readDatabase();
             Node node = (Node) xpath.evaluate("storage/regex[@id=" + id + "]", document, XPathConstants.NODE);
             return map(node);
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public class XmlStorageService implements RegexStorageService {
     @Override
     public List<Regex> getAll() {
         try {
-            read();
+            readDatabase();
             NodeList entities = (NodeList) xpath.evaluate("storage/regex", document, XPathConstants.NODESET);
             List<Regex> list = new ArrayList<>();
             for (int i = 0; i < entities.getLength(); i++) {
@@ -70,26 +71,33 @@ public class XmlStorageService implements RegexStorageService {
 
     @Override
     public void store(Regex regex) {
+        if (StringUtils.isEmpty(regex.getId())) {
+            save(regex);
+        } else {
+            update(regex);
+        }
+    }
+
+    private void save(Regex regex) {
         try {
-            read();
+            readDatabase();
             regex.setId(generator.generateId());
             Node root = (Node) xpath.evaluate("/storage", document, XPathConstants.NODE);
             root.appendChild(map(regex));
-            save();
+            saveDatabase();
         } catch (Exception e) {
             throw new StorageException("Couldn't store regex: " + e.getMessage());
         }
     }
 
-    @Override
-    public void update(Regex regex) {
+    private void update(Regex regex) {
         try {
-            read();
+            readDatabase();
             Element node = (Element) xpath.evaluate("storage/regex[@id=" + regex.getId() + "]", document, XPathConstants.NODE);
             setChildNodeTextContent(node, "value", regex.getValue());
             setChildNodeTextContent(node, "description", regex.getDescription());
             setChildNodeTextContent(node, "text", regex.getText());
-            save();
+            saveDatabase();
         } catch (Exception e) {
             throw new StorageException("Couldn't update regex: " + e.getMessage());
         }
@@ -102,11 +110,11 @@ public class XmlStorageService implements RegexStorageService {
     @Override
     public void delete(String id) {
         try {
-            read();
+            readDatabase();
             Node root = (Node) xpath.evaluate("/storage", document, XPathConstants.NODE);
             Node regex = (Node) xpath.evaluate("storage/regex[@id=" + id + "]", document, XPathConstants.NODE);
             root.removeChild(regex);
-            save();
+            saveDatabase();
         } catch (Exception e) {
             throw new StorageException("Couldn't delete regex: " + e.getMessage());
         }
@@ -130,7 +138,7 @@ public class XmlStorageService implements RegexStorageService {
                 .build();
     }
 
-    private void read() {
+    private void readDatabase() {
         try {
             Resource resource = new FileSystemResource(location);
             InputStream in = resource.getInputStream();
@@ -142,7 +150,7 @@ public class XmlStorageService implements RegexStorageService {
         }
     }
 
-    private void save() throws Exception {
+    private void saveDatabase() throws Exception {
         DOMSource source = new DOMSource(document);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -181,7 +189,7 @@ public class XmlStorageService implements RegexStorageService {
         String generateId();
     }
 
-    class IncrementalIdGenerator implements  IdGenerator {
+    class IncrementalIdGenerator implements IdGenerator {
         public String generateId() {
             try {
                 Element root = (Element) xpath.evaluate("/storage", document, XPathConstants.NODE);
