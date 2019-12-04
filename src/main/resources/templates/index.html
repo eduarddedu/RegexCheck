@@ -7,7 +7,7 @@
     <div th:if="${error}" class="alert alert-danger" th:text="${error.message}">
     </div>
     <div class="card" id="check-regex-card">
-        <div class="card-header">
+        <div class="card-header bg-info text-light">
             Test a Java regular expression
         </div>
         <div class="card-body">
@@ -44,7 +44,7 @@
     </div>
     <br>
     <div class="card" id="save-regex-card" th:attr="style=(${matchers} eq null ? 'display:none' : 'display:block')">
-        <div class="card-header">
+        <div class="card-header bg-info text-light">
             Comment And Save
         </div>
         <div class="card-body">

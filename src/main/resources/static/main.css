@@ -1,24 +1,27 @@
+body {
+  background-color: eee;
+  min-height: 100vh;
+}
 header {
     margin-bottom: 4rem;
 }
-
 .navbar-nav {
     flex-direction: row;
 }
-
 .navbar-nav>.nav-link {
     padding-right: .5rem;
     padding-left: .5rem;
 }
-
 .navbar >.container {
     justify-content: flex-start;
 }
-
-.card {
+.navbar {
   box-shadow: 3px 3px 20px -10px;
 }
-
 .hidden {
   display:none;
+}
+
+.card {
+   box-shadow: 1px 3px 10px -8px;
 }
